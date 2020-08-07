@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "outDir": "dist",
+    "removeComments": true,
+    "declarationMap": true,
+    "declaration": true,
+    "sourceMap": true
+  },
+  "include": ["./src/*.ts"],
+  "exclude": ["node_modules", ".vscode"]
+}
