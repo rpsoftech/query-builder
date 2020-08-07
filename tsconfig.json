@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
+    "rootDir": "src",
     "outDir": "dist",
     "removeComments": true,
     "declarationMap": true,
