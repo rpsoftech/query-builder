@@ -1,1 +1,0 @@
-{"version":3,"file":"WrapperPromise.d.ts","sourceRoot":"","sources":["../src/WrapperPromise.ts"],"names":[],"mappings":"AAAA,qBAAa,cAAc;IAUvB,GAAG,EAAC,MAAM,CAAC;IACX,EAAE,EAAC,QAAQ,CAAC;IACZ,IAAI,EAAC,QAAQ,CAAC;IACd,OAAO,MAAC;IACR,MAAM,MAAC;gBACK,GAAG,KAAA,EAAE,IAAI,KAAA,EAAE,EAAE,CAAC,EAAC,QAAQ;IASnC,SAAS;IAWT,MAAM;CAkBT"}

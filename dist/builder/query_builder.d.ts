@@ -16,4 +16,3 @@ export declare abstract class QueryBuilder extends GenericQueryBuilder {
     _insert_batch(table: any, set?: any, ignore?: boolean, suffix?: string): any;
     _count(table: any): string;
 }
-//# sourceMappingURL=query_builder.d.ts.map

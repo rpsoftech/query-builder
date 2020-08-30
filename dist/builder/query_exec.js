@@ -109,4 +109,3 @@ class QueryExec extends query_builder_1.QueryBuilder {
     }
 }
 exports.QueryExec = QueryExec;
-//# sourceMappingURL=query_exec.js.map

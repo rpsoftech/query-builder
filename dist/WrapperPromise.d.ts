@@ -8,4 +8,3 @@ export declare class WrapperPromise {
     promisify(): Promise<unknown>;
     invoke(): void;
 }
-//# sourceMappingURL=WrapperPromise.d.ts.map

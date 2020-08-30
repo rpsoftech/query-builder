@@ -18,9 +18,8 @@ export declare class QueryExec extends QueryBuilder {
     insert(table?: string, set?: any, ignore?: boolean, suffix?: string): Promise<any>;
     insert_ignore(table: any, set: any, on_dupe?: any): Promise<any>;
     insert_batch(table: any, set: any, ignore?: any, on_dupe?: any): Promise<any>;
-    update(table: any, set: any, where: any): Promise<any>;
+    update(table: any, set: any, where?: any): Promise<any>;
     delete(table?: any, where?: any): void;
     empty_table(table: any): void;
     truncate(table: any): void;
 }
-//# sourceMappingURL=query_exec.d.ts.map

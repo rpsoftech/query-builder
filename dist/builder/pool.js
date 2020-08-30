@@ -38,4 +38,3 @@ class Pool {
     }
 }
 exports.Pool = Pool;
-//# sourceMappingURL=pool.js.map

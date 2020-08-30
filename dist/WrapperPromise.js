@@ -30,4 +30,3 @@ class WrapperPromise {
     }
 }
 exports.WrapperPromise = WrapperPromise;
-//# sourceMappingURL=WrapperPromise.js.map

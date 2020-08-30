@@ -6,4 +6,3 @@ export declare const ERROR: {
     SECOND_PARAM_OF_GET_WHERE_ERR: Error;
     NO_VALID_RESULTS_HANDLER: Error;
 };
-//# sourceMappingURL=QueryExecError.d.ts.map

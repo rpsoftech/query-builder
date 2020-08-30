@@ -105,4 +105,3 @@ export declare abstract class GenericQueryBuilder {
     abstract _compile_update(): any;
     abstract _compile_delete(): any;
 }
-//# sourceMappingURL=GenericQueryBuilder.d.ts.map

@@ -9,4 +9,3 @@ exports.ERROR = {
     SECOND_PARAM_OF_GET_WHERE_ERR: new Error("Second parameter of get_where() must be an object with key:value pairs."),
     NO_VALID_RESULTS_HANDLER: new Error('QueryBuilder is unsure how to respond since no callback or Promise resolve/reject methods were provided.'),
 };
-//# sourceMappingURL=QueryExecError.js.map

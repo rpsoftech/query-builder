@@ -5,9 +5,9 @@
     "rootDir": "src",
     "outDir": "dist",
     "removeComments": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "declaration": true,
-    "sourceMap": true
+    "sourceMap": false
   },
   "include": ["./src/*.ts"],
   "exclude": ["node_modules", ".vscode"]

@@ -213,4 +213,3 @@ class QueryBuilder extends GenericQueryBuilder_1.GenericQueryBuilder {
     }
 }
 exports.QueryBuilder = QueryBuilder;
-//# sourceMappingURL=query_builder.js.map

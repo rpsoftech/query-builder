@@ -7,4 +7,3 @@ export declare class Pool {
     get_connection(): Promise<QueryExec>;
     disconnect(cb: any): Promise<unknown>;
 }
-//# sourceMappingURL=pool.d.ts.map
