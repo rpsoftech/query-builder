@@ -168,18 +168,18 @@ export class QueryExec extends QueryBuilder {
   delete(table?, where?) {
     const sql = this._delete(table, where);
     this.reset_query(sql);
-    this._exec(sql);
+    return this._exec(sql);
   }
 
   empty_table(table) {
     const sql = this._empty_table(table);
     this.reset_query(sql);
-    this._exec(sql);
+    return this._exec(sql);
   }
 
   truncate(table) {
     const sql = this._truncate(table);
     this.reset_query(sql);
-    this._exec(sql);
+    return this._exec(sql);
   }
 }
