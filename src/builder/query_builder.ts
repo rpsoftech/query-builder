@@ -163,7 +163,7 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
     return this._build_limit_clause(sql, limit_to, offset_val);
   }
 
-  _insert_batch(table, set:any[] = null, ignore = false, suffix = '') {
+  _insert_batch(table, set: any[] = null, ignore = false, suffix = '') {
     const orig_table = (table = table || '');
     ignore = typeof ignore !== 'boolean' ? false : ignore;
     suffix = typeof suffix !== 'string' ? '' : suffix;
@@ -197,27 +197,27 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
       );
     }
 
-   set.forEach(row=>{
-    const is_object =
-      Object.prototype.toString.call(row) ==
-      Object.prototype.toString.call({});
-    if (!is_object || (is_object && Object.keys(row).length === 0)) {
-      throw new Error(
-        'insert_batch(): An invalid item was found in the data array!'
-      );
-    } else {
-      Object.keys(row).forEach(v1 => {
-        const v = row[v1];
-        if (!/^(number|string|boolean)$/.test(typeof v) && v !== null) {
-          throw new Error('set(): Invalid value provided!');
-        } else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
-          throw new Error(
-            'set(): Infinity and NaN are not valid values in MySQL!'
-          );
-        }
-      });
-    }
-   })
+    set.forEach((row) => {
+      const is_object =
+        Object.prototype.toString.call(row) ==
+        Object.prototype.toString.call({});
+      if (!is_object || (is_object && Object.keys(row).length === 0)) {
+        throw new Error(
+          'insert_batch(): An invalid item was found in the data array!'
+        );
+      } else {
+        Object.keys(row).forEach((v1) => {
+          const v = row[v1];
+          if (!/^(number|string|boolean)$/.test(typeof v) && v !== null) {
+            throw new Error('set(): Invalid value provided!');
+          } else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
+            throw new Error(
+              'set(): Infinity and NaN are not valid values in MySQL!'
+            );
+          }
+        });
+      }
+    });
     if (set.length == 0) {
       return this.insert(orig_table, {}, ignore, suffix === '' ? null : suffix);
     }
@@ -225,13 +225,13 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
     const map = [];
     const columns = Object.keys(set[0]);
 
-    set.forEach(rowObj=>{
+    set.forEach((rowObj) => {
       const row = [];
-      columns.forEach(a=>{
-        if(rowObj[a]){
+      columns.forEach((a) => {
+        if (typeof rowObj[a] !== 'undefined') {
           row.push(this._qb_escape(rowObj[a]));
         }
-      })
+      });
       if (row.length !== columns.length) {
         throw new Error(
           `insert_batch(): Cannot use batch insert into ${table} - fields must match on all rows (${row.join(
