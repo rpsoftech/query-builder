@@ -6,7 +6,7 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
   condition_rgx: RegExp;
   rand_word: string;
   dbInstance: Connection;
-  constructor(db:Connection) {
+  constructor(db: Connection) {
     super();
     this.dbInstance = db;
     this.rand_word = 'RAND()';
@@ -17,7 +17,6 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
 
   // ---------------------------------------- SQL ESCAPE FUNCTIONS ------------------------ //
   _qb_escape(str) {
-    
     if (typeof str === 'boolean') {
       str = str === false ? 0 : 1;
     } else if (
@@ -164,7 +163,7 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
     return this._build_limit_clause(sql, limit_to, offset_val);
   }
 
-  _insert_batch(table, set = null, ignore = false, suffix = '') {
+  _insert_batch(table, set:any[] = null, ignore = false, suffix = '') {
     const orig_table = (table = table || '');
     ignore = typeof ignore !== 'boolean' ? false : ignore;
     suffix = typeof suffix !== 'string' ? '' : suffix;
@@ -198,65 +197,50 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
       );
     }
 
-    for (let key in set) {
-      const row = set[key];
-      const is_object =
-        Object.prototype.toString.call(row) ==
-        Object.prototype.toString.call({});
-      if (!is_object || (is_object && Object.keys(row).length === 0)) {
-        throw new Error(
-          'insert_batch(): An invalid item was found in the data array!'
-        );
-      } else {
-        for (let i in row) {
-          const v = row[i];
-
-          if (!/^(number|string|boolean)$/.test(typeof v) && v !== null) {
-            throw new Error('set(): Invalid value provided!');
-          } else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
-            throw new Error(
-              'set(): Infinity and NaN are not valid values in MySQL!'
-            );
-          }
+   set.forEach(row=>{
+    const is_object =
+      Object.prototype.toString.call(row) ==
+      Object.prototype.toString.call({});
+    if (!is_object || (is_object && Object.keys(row).length === 0)) {
+      throw new Error(
+        'insert_batch(): An invalid item was found in the data array!'
+      );
+    } else {
+      Object.keys(row).forEach(v1 => {
+        const v = row[v1];
+        if (!/^(number|string|boolean)$/.test(typeof v) && v !== null) {
+          throw new Error('set(): Invalid value provided!');
+        } else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
+          throw new Error(
+            'set(): Infinity and NaN are not valid values in MySQL!'
+          );
         }
-      }
+      });
     }
-
+   })
     if (set.length == 0) {
       return this.insert(orig_table, {}, ignore, suffix === '' ? null : suffix);
     }
 
     const map = [];
-    const columns = [];
+    const columns = Object.keys(set[0]);
 
-    // Obtain all the column names
-    for (let key in set[0]) {
-      if (set[0].hasOwnProperty(key)) {
-        if (columns.indexOf(key) == -1) {
-          columns.push(this._protect_identifiers(key));
+    set.forEach(rowObj=>{
+      const row = [];
+      columns.forEach(a=>{
+        if(rowObj[a]){
+          row.push(this._qb_escape(rowObj[a]));
         }
+      })
+      if (row.length !== columns.length) {
+        throw new Error(
+          `insert_batch(): Cannot use batch insert into ${table} - fields must match on all rows (${row.join(
+            ','
+          )} vs ${columns.join(',')}).`
+        );
       }
-    }
-
-    for (let i = 0; i < set.length; i++) {
-      ((i) => {
-        const row = [];
-        for (let key in set[i]) {
-          if (set[i].hasOwnProperty(key)) {
-            row.push(this._qb_escape(set[i][key]));
-          }
-        }
-        if (row.length != columns.length) {
-          throw new Error(
-            `insert_batch(): Cannot use batch insert into ${table} - fields must match on all rows (${row.join(
-              ','
-            )} vs ${columns.join(',')}).`
-          );
-        }
-        map.push('(' + row.join(', ') + ')');
-      })(i);
-    }
-
+      map.push('(' + row.join(', ') + ')');
+    });
     const verb = 'INSERT' + (ignore === true ? ' IGNORE' : '');
     const sql = `${verb} INTO ${this.from_array[0]} (${columns.join(
       ', '
