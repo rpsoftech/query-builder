@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "",
   "main": "dist/index.js",
+  "homepage": "https://github.com/rpsoftech/query-builder.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
@@ -16,6 +17,6 @@
     "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
   },
-  "author": "",
+  "author": "keyurshah3939@gmail.com",
   "license": "ISC"
 }

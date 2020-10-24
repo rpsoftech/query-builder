@@ -1,5 +1,5 @@
 export abstract class GenericQueryBuilder {
-  reserved_identifiers = ['*'];
+  reserved_identifiers = ["*"];
   private where_array = [];
   private where_in_array = [];
   from_array = [];
@@ -34,31 +34,29 @@ export abstract class GenericQueryBuilder {
   // Simply setting all properties to [] causes reference issues in the parent class.
   _clear_array(a, debug = false) {
     if (debug === true) {
-      console.log('DEBUG before (' + Object.prototype.toString.call(a) + '):');
+      console.log("DEBUG before (" + Object.prototype.toString.call(a) + "):");
       console.dir(a);
     }
-    if (
-      Object.prototype.toString.call(a) === Object.prototype.toString.call({})
-    ) {
-      for (let key in a) {
-        if (a.hasOwnProperty(key)) {
-          delete a[key];
+    if (typeof a === "object" && Array.isArray(a) === false) {
+      Object.keys(a).forEach((key) => {
+        if (a.key) {
+          delete a.key;
         }
-      }
+      });
     } else if (Array.isArray(a)) {
       while (a.length > 0) {
         a.pop();
       }
     }
     if (debug === true) {
-      console.log('DEBUG after (' + Object.prototype.toString.call(a) + '):');
+      console.log("DEBUG after (" + Object.prototype.toString.call(a) + "):");
       console.dir(a);
     }
   }
 
   private _extract_having_parts(key, key_array) {
     let m;
-    key = key.trim().replace(/\s+/g, ' ');
+    key = key.trim().replace(/\s+/g, " ");
     const str_condition = /^([^\s]+\s(<=|>=|<>|>|<|!=|=))+\s"([^"]+)"$/;
     const sstr_condition = /^([^\s]+\s(<=|>=|<>|>|<|!=|=))+\s'([^']+)'$/;
     const num_condition = /^([^\s]+\s(<=|>=|<>|>|<|!=|=))+\s((?=.)([+-]?([0-9]*)(\.([0-9]+))?))$/;
@@ -81,25 +79,25 @@ export abstract class GenericQueryBuilder {
       key = key_array;
     } else {
       throw new Error(
-        'An invalid condition was supplied (' +
+        "An invalid condition was supplied (" +
           key +
-          ') in your having statement!'
+          ") in your having statement!"
       );
     }
 
     return key_array;
   }
 
-  private _prepare_for_limit_and_offset(item, type = 'limit') {
+  private _prepare_for_limit_and_offset(item, type = "limit") {
     type = type.toLowerCase();
 
     if (!/^(string|number)$/.test(typeof item)) {
       throw new Error(
-        'Only integers or integers in the form of a string are allowed'
+        "Only integers or integers in the form of a string are allowed"
       );
     }
 
-    if (typeof item === 'string') {
+    if (typeof item === "string") {
       item = item.trim();
       if (!/^\d+$/.test(item)) {
         throw new Error(
@@ -111,7 +109,7 @@ export abstract class GenericQueryBuilder {
     }
 
     // Make sure the number is a good one
-    if (typeof item === 'number') {
+    if (typeof item === "number") {
       // Check for NaN and Infinity
       if (item !== +item || item === Infinity) {
         throw new Error(`You have not provided a valid number to ${type} by!`);
@@ -121,7 +119,7 @@ export abstract class GenericQueryBuilder {
       if (item < 0) {
         throw new Error(
           `Only positive integers are allowed when ${
-            type == 'offset' ? 'offset' : 'limit'
+            type == "offset" ? "offset" : "limit"
           }ing SQL results!`
         );
       }
@@ -149,8 +147,8 @@ export abstract class GenericQueryBuilder {
    * @param	bool	split	Whether to split identifiers when a dot is encountered
    * @return	mixed
    */
-  private _escape_identifiers(item: {} | string = '*', split = true) {
-    if (item === '*') return item;
+  private _escape_identifiers(item: {} | string = "*", split = true) {
+    if (item === "*") return item;
 
     // If object is supplied, escape the value of each key
     if (
@@ -168,9 +166,9 @@ export abstract class GenericQueryBuilder {
   private _escape_identifiers_string(item: string, split = true) {
     // Avoid breaking functions and literal values inside queries
     if (
-      (typeof item === 'string' && /^\d+$/.test(item)) ||
+      (typeof item === "string" && /^\d+$/.test(item)) ||
       item[0] === "'" ||
-      item.indexOf('(') !== -1
+      item.indexOf("(") !== -1
     ) {
       return item;
     }
@@ -189,18 +187,18 @@ export abstract class GenericQueryBuilder {
         return item.replace(
           RegExp(
             `\\${escape_chars[0]}?([^\\${escape_chars[1]}\.]+)\\${escape_chars[1]}?\.`,
-            'ig'
+            "ig"
           ),
           `${escape_chars[0]}$1${escape_chars[1]}.`
         );
       }
     });
 
-    const dot = split !== false ? '.' : '';
+    const dot = split !== false ? "." : "";
     return item.replace(
       RegExp(
         `\\${escape_chars[0]}?([^\\${escape_chars[1]}${dot}]+)\\${escape_chars[1]}?(\.)?`,
-        'ig'
+        "ig"
       ),
       `${escape_chars[0]}$1${escape_chars[1]}$2`
     );
@@ -235,10 +233,10 @@ export abstract class GenericQueryBuilder {
     protect_identifiers = null,
     field_exists = true
   ) {
-    if (item === '') return item;
+    if (item === "") return item;
 
     protect_identifiers =
-      typeof protect_identifiers === 'boolean' ? protect_identifiers : true;
+      typeof protect_identifiers === "boolean" ? protect_identifiers : true;
 
     if (
       Object.prototype.toString.call(item) ===
@@ -256,32 +254,32 @@ export abstract class GenericQueryBuilder {
     }
 
     // Make sure item is a string...
-    if (typeof item !== 'string')
+    if (typeof item !== "string")
       throw new Error(
-        'Invalid item passed to _protect_identifiers:' + typeof item
+        "Invalid item passed to _protect_identifiers:" + typeof item
       );
 
     // Convert tabs or multiple spaces into single spaces
-    item = item.trim().replace(/\s+/g, ' ');
+    item = item.trim().replace(/\s+/g, " ");
 
-    let alias = '';
+    let alias = "";
 
     // This is basically a bug fix for queries that use MAX, MIN, subqueries, etc.
     // If a parenthesis is found we know that we do not need to
     // escape the data or add a prefix.
     const match = /[\(\)\']{1}/.exec(item);
     if (match && match.index !== item.length) {
-      const has_alias = item.lastIndexOf(')');
+      const has_alias = item.lastIndexOf(")");
       if (has_alias >= 0) {
         alias = item
           .substr(has_alias + 1)
-          .replace(/\sAS\s/i, '')
+          .replace(/\sAS\s/i, "")
           .trim();
         alias = this._escape_identifiers_string(alias);
-        if (alias != '') alias = ' AS ' + alias;
+        if (alias != "") alias = " AS " + alias;
         item = item.substr(0, has_alias + 1);
       } else {
-        alias = '';
+        alias = "";
       }
 
       return item + alias;
@@ -296,12 +294,12 @@ export abstract class GenericQueryBuilder {
           this._escape_identifiers(item.slice(offset + 4), false)
         : item.substr(offset);
       item = item.substr(0, offset);
-    } else if (item.indexOf(' ') !== -1) {
-      const alias_index = item.indexOf(' ');
+    } else if (item.indexOf(" ") !== -1) {
+      const alias_index = item.indexOf(" ");
 
       alias =
         protect_identifiers && !this._has_operator(item.substr(alias_index + 1))
-          ? ' ' + this._escape_identifiers(item.substr(alias_index + 1))
+          ? " " + this._escape_identifiers(item.substr(alias_index + 1))
           : item.substr(alias_index);
       item = item.substr(0, alias_index);
     }
@@ -309,8 +307,8 @@ export abstract class GenericQueryBuilder {
     // Break the string apart if it contains periods, then insert the table prefix
     // in the correct location, assuming the period doesn't indicate that we're dealing
     // with an alias. While we're at it, we will escape the components
-    if (item.indexOf('.') !== -1) {
-      let parts = item.split('.');
+    if (item.indexOf(".") !== -1) {
+      let parts = item.split(".");
       const first_seg = parts[0].trim(); //.replace(/`/g,'');
 
       // Does the first segment of the exploded item match
@@ -326,7 +324,7 @@ export abstract class GenericQueryBuilder {
             }
           });
 
-          item = parts.join('.');
+          item = parts.join(".");
         }
         return item + alias;
       }
@@ -358,21 +356,21 @@ export abstract class GenericQueryBuilder {
 
     // Does the string contain a comma?  If so, we need to separate
     // the string into discreet statements
-    if (table.indexOf(',') !== -1) {
-      return this._track_aliases(table.split(','));
+    if (table.indexOf(",") !== -1) {
+      return this._track_aliases(table.split(","));
     }
 
     // if a table alias is used we can recognize it by a space
-    if (table.indexOf(' ') !== -1) {
+    if (table.indexOf(" ") !== -1) {
       // if the alias is written with the AS keyword, remove it
-      table = table.replace(/\s+AS\s+/gi, ' ');
+      table = table.replace(/\s+AS\s+/gi, " ");
 
       // Grab the alias
       const alias = table
-        .slice(table.lastIndexOf(' '))
+        .slice(table.lastIndexOf(" "))
         .trim()
-        .replace(/`/g, '')
-        .replace(/\[([^\]]+)\]/, '$1');
+        .replace(/`/g, "")
+        .replace(/\[([^\]]+)\]/, "$1");
 
       // Store the alias, if it doesn't already exist
       if (this.aliased_tables.indexOf(alias) == -1) {
@@ -381,15 +379,15 @@ export abstract class GenericQueryBuilder {
     }
   }
   private _create_aliases_from_table(item) {
-    if (item.indexOf('.') !== -1) {
-      return item.split('.').reverse()[0];
+    if (item.indexOf(".") !== -1) {
+      return item.split(".").reverse()[0];
     }
 
     return item;
   }
 
   private _has_operator(str) {
-    if (typeof str === 'string' && str.length > 0) {
+    if (typeof str === "string" && str.length > 0) {
       const match = /(<|>|!|=|\sIS NULL|\sIS NOT NULL|\sEXISTS|\sBETWEEN|\sLIKE|\sCASE|\sTHEN|\sWHEN|\sIN\s*\(|\s)/i.test(
         str.trim()
       );
@@ -401,39 +399,39 @@ export abstract class GenericQueryBuilder {
   }
   // ---------------------------- SQL BUILD TOOLS ----------------------------//
   _build_where_clause() {
-    if (this.where_array.length === 0) return '';
-    return `WHERE ${this.where_array.join(' ')}`;
+    if (this.where_array.length === 0) return "";
+    return `WHERE ${this.where_array.join(" ")}`;
   }
 
   _build_from_clause() {
-    let sql = '';
+    let sql = "";
     if (this.from_array.length === 0) {
       throw new Error(
-        'You have not provided any tables, views, or store procedures for this query!!'
+        "You have not provided any tables, views, or store procedures for this query!!"
       );
     }
-    sql = `FROM ${this.from_array.join(', ')}`;
+    sql = `FROM ${this.from_array.join(", ")}`;
     return sql.trim();
   }
 
   _build_join_string() {
-    if (this.join_array.length <= 0) return '';
-    return this.join_array.join(' ');
+    if (this.join_array.length <= 0) return "";
+    return this.join_array.join(" ");
   }
 
   _build_group_by_clause() {
-    if (this.group_by_array.length <= 0) return '';
-    return `GROUP BY ${this.group_by_array.join(', ')}`;
+    if (this.group_by_array.length <= 0) return "";
+    return `GROUP BY ${this.group_by_array.join(", ")}`;
   }
 
   _build_having_clause() {
-    if (this.having_array.length <= 0) return '';
-    return `HAVING ${this.having_array.join(' ')}`;
+    if (this.having_array.length <= 0) return "";
+    return `HAVING ${this.having_array.join(" ")}`;
   }
 
   _build_order_by_clause() {
-    if (this.order_by_array.length <= 0) return '';
-    return `ORDER BY ${this.order_by_array.join(', ')}`;
+    if (this.order_by_array.length <= 0) return "";
+    return `ORDER BY ${this.order_by_array.join(", ")}`;
   }
 
   reset_query(new_last_query, debug = false) {
@@ -454,7 +452,7 @@ export abstract class GenericQueryBuilder {
     this._clear_array(this.returning_ids);
 
     this._clear_array(this.last_query_string);
-    if (typeof new_last_query === 'string') {
+    if (typeof new_last_query === "string") {
       this.last_query_string.push(new_last_query);
     }
   }
@@ -463,49 +461,49 @@ export abstract class GenericQueryBuilder {
     if (
       Object.prototype.toString.call(key) ===
         Object.prototype.toString.call({}) &&
-      typeof value === 'boolean'
+      typeof value === "boolean"
     ) {
       escape = value;
     }
 
-    escape = typeof escape === 'boolean' ? escape : true;
+    escape = typeof escape === "boolean" ? escape : true;
 
-    if (typeof key === 'string' && Array.isArray(value) && value.length > 0) {
-      return this._where_in(key, value, false, 'AND ');
+    if (typeof key === "string" && Array.isArray(value) && value.length > 0) {
+      return this._where_in(key, value, false, "AND ");
     }
-    return this._where(key, value, 'AND ', escape);
+    return this._where(key, value, "AND ", escape);
   }
 
   or_where(key, value = null, escape = true) {
-    escape = typeof escape === 'boolean' ? escape : true;
+    escape = typeof escape === "boolean" ? escape : true;
 
     if (
-      typeof key === 'string' &&
-      typeof value === 'object' &&
+      typeof key === "string" &&
+      typeof value === "object" &&
       Array.isArray(value) &&
       value.length > 0
     ) {
-      return this._where_in(key, value, false, 'OR ');
+      return this._where_in(key, value, false, "OR ");
     }
-    return this._where(key, value, 'OR ', escape);
+    return this._where(key, value, "OR ", escape);
   }
 
-  private _where(key, value = null, type = 'AND ', escape = true) {
-    escape = typeof escape === 'boolean' ? escape : true;
+  private _where(key, value = null, type = "AND ", escape = true) {
+    escape = typeof escape === "boolean" ? escape : true;
 
     // If key is not an object....
     if (
       Object.prototype.toString.call(key) !== Object.prototype.toString.call({})
     ) {
       // If it's not an object, it must be a string
-      if (typeof key !== 'string') {
+      if (typeof key !== "string") {
         throw new Error(
           `where(): If first parameter is not an object, it must be a string. ${typeof key} provided.`
         );
       } else {
         // If it is a string, it can't be an empty one
         if (key.length == 0) {
-          throw new Error('where(): No field name or query provided!');
+          throw new Error("where(): No field name or query provided!");
         }
       }
 
@@ -513,7 +511,7 @@ export abstract class GenericQueryBuilder {
       // not just a field name, split it into individual parts to escape it properly
       if (
         /(<=|>=|<>|>|<|!=|=)/.test(key) &&
-        key.indexOf('(') === -1 &&
+        key.indexOf("(") === -1 &&
         escape === true
       ) {
         const filters = key.split(/\s+(AND|OR)\s+/i);
@@ -526,11 +524,11 @@ export abstract class GenericQueryBuilder {
             if (parsed.length >= 4) {
               const key =
                 parsed[1].trim() +
-                (parsed[2].trim() !== '=' ? ' ' + parsed[2].trim() : '');
+                (parsed[2].trim() !== "=" ? " " + parsed[2].trim() : "");
               const value = parsed[3]
                 .trim()
-                .replace(/^((?:'|"){1})(.*)/, '$2')
-                .replace(/'$/, '');
+                .replace(/^((?:'|"){1})(.*)/, "$2")
+                .replace(/'$/, "");
               if (joiner === null || /AND/i.test(joiner)) {
                 self.where(key, value, true);
               } else {
@@ -569,16 +567,16 @@ export abstract class GenericQueryBuilder {
         continue;
       }
 
-      const prefix = this.where_array.length == 0 ? '' : type;
+      const prefix = this.where_array.length == 0 ? "" : type;
 
       if (v === null && !this._has_operator(k)) {
-        k += ' IS NULL';
+        k += " IS NULL";
       }
 
       if (v !== null) {
         if (escape === true) {
           k = this._protect_identifiers(k, false, escape);
-          v = ' ' + this._qb_escape(v);
+          v = " " + this._qb_escape(v);
         }
 
         if (
@@ -586,11 +584,11 @@ export abstract class GenericQueryBuilder {
           Object.prototype.toString.call(key) ===
             Object.prototype.toString.call({})
         ) {
-          v = ' ' + this._qb_escape(v);
+          v = " " + this._qb_escape(v);
         }
 
         if (!this._has_operator(k)) {
-          k += ' =';
+          k += " =";
         }
       } else {
         k = this._protect_identifiers(k, false, escape);
@@ -607,42 +605,42 @@ export abstract class GenericQueryBuilder {
   }
 
   where_in(key, values, escape = true) {
-    return this._where_in(key, values, false, 'AND ', escape);
+    return this._where_in(key, values, false, "AND ", escape);
   }
 
   or_where_in(key, values, escape = true) {
-    return this._where_in(key, values, false, 'OR ', escape);
+    return this._where_in(key, values, false, "OR ", escape);
   }
 
   where_not_in(key, values, escape = true) {
-    return this._where_in(key, values, true, 'AND ', escape);
+    return this._where_in(key, values, true, "AND ", escape);
   }
 
   or_where_not_in(key, values, escape = true) {
-    return this._where_in(key, values, true, 'OR ', escape);
+    return this._where_in(key, values, true, "OR ", escape);
   }
 
-  _where_in(key = '', values = [], not, type = 'AND ', escape = true) {
-    not = not ? ' NOT' : '';
-    escape = typeof escape === 'boolean' ? escape : true;
+  _where_in(key = "", values = [], not, type = "AND ", escape = true) {
+    not = not ? " NOT" : "";
+    escape = typeof escape === "boolean" ? escape : true;
 
     if (
-      typeof key !== 'string' ||
-      (typeof key === 'string' && key.length == 0)
+      typeof key !== "string" ||
+      (typeof key === "string" && key.length == 0)
     ) {
       throw new Error(
-        'where_' +
-          (not === '' ? '' : not.toLowerCase() + '_') +
-          'in(): Invalid field name provided.'
+        "where_" +
+          (not === "" ? "" : not.toLowerCase() + "_") +
+          "in(): Invalid field name provided."
       );
     }
 
     // `values` must be an array...
     if (!Array.isArray(values)) {
       throw new Error(
-        'where_' +
-          (not === '' ? '' : not.toLowerCase() + '_') +
-          'in(): Invalid second parameter provided--it must be an array of scalar values or an empty array.'
+        "where_" +
+          (not === "" ? "" : not.toLowerCase() + "_") +
+          "in(): Invalid second parameter provided--it must be an array of scalar values or an empty array."
       );
     }
 
@@ -653,14 +651,14 @@ export abstract class GenericQueryBuilder {
       this.where_in_array.push(this._qb_escape(values[i]));
     }
 
-    const prefix = this.where_array.length === 0 ? '' : type;
+    const prefix = this.where_array.length === 0 ? "" : type;
     const where_in =
       prefix +
       this._protect_identifiers(key, false, escape) +
       not +
-      ' IN (' +
-      this.where_in_array.join(', ') +
-      ')';
+      " IN (" +
+      this.where_in_array.join(", ") +
+      ")";
     this.where_array.push(where_in);
 
     // reset the array for multiple calls
@@ -669,34 +667,34 @@ export abstract class GenericQueryBuilder {
   }
 
   like(field, match, side?) {
-    return this._like(field, match, 'AND ', side, '');
+    return this._like(field, match, "AND ", side, "");
   }
 
   not_like(field, match, side) {
-    return this._like(field, match, 'AND ', side, ' NOT');
+    return this._like(field, match, "AND ", side, " NOT");
   }
 
   or_like(field, match, side?) {
-    return this._like(field, match, 'OR ', side, '');
+    return this._like(field, match, "OR ", side, "");
   }
 
   or_not_like(field, match, side) {
-    return this._like(field, match, 'OR ', side, ' NOT');
+    return this._like(field, match, "OR ", side, " NOT");
   }
 
-  private _like(field, match, type = 'AND ', side = 'both', not = '') {
+  private _like(field, match, type = "AND ", side = "both", not = "") {
     match = /^(string|number|boolean)$/.test(typeof match) ? match : null;
 
-    if (typeof field === 'string' && field.length == 0) {
-      throw new Error('like(): The field you provided is empty.');
+    if (typeof field === "string" && field.length == 0) {
+      throw new Error("like(): The field you provided is empty.");
     } else if (
-      typeof field === 'object' &&
+      typeof field === "object" &&
       (field.length == 0 || Object.keys(field).length === 0)
     ) {
-      throw new Error('like(): The object you provided is empty.');
+      throw new Error("like(): The object you provided is empty.");
     } else if (!/^(string|object)$/.test(typeof field)) {
       throw new Error(
-        'like(): You have provided an invalid value as the first parameter. Only valid strings and objects are allowed.'
+        "like(): You have provided an invalid value as the first parameter. Only valid strings and objects are allowed."
       );
     }
 
@@ -706,7 +704,7 @@ export abstract class GenericQueryBuilder {
     ) {
       if (match === null) {
         throw new Error(
-          'like(): Since your first parameter is a string, your second param must a valid number, boolean, or string.'
+          "like(): Since your first parameter is a string, your second param must a valid number, boolean, or string."
         );
       }
 
@@ -723,36 +721,36 @@ export abstract class GenericQueryBuilder {
       // Make sure value is only string, number, or boolean
       if (!/^(string|number|boolean)$/.test(typeof v)) {
         throw new Error(
-          'like(): You have provided an invalid value as the second parameter. Only valid strings, numbers, and booleans are allowed.'
+          "like(): You have provided an invalid value as the second parameter. Only valid strings, numbers, and booleans are allowed."
         );
       }
       // If number, don't allow Infinity or NaN
-      else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
+      else if (typeof v === "number" && (v === Infinity || v !== +v)) {
         throw new Error(
-          'like(): You have provided an invalid number value as the second parameter. Only valid strings, numbers, and booleans are allowed.'
+          "like(): You have provided an invalid number value as the second parameter. Only valid strings, numbers, and booleans are allowed."
         );
       }
 
       // Make sure to escape the value...
       v = this._qb_escape(v);
 
-      if (side === 'none') {
+      if (side === "none") {
         like_statement = k + not + ` LIKE ${v}`;
-      } else if (side === 'before' || side === 'left') {
-        if (typeof v === 'string') {
+      } else if (side === "before" || side === "left") {
+        if (typeof v === "string") {
           like_statement = k + not + ` LIKE ${v.substr(0, 1)}%${v.substr(1)}`;
         } else {
           like_statement = k + not + ` LIKE %${v}`;
         }
-      } else if (side === 'after' || side === 'right') {
-        if (typeof v === 'string') {
+      } else if (side === "after" || side === "right") {
+        if (typeof v === "string") {
           like_statement =
             k + not + ` LIKE ${v.substr(0, v.length - 1)}%${v.slice(-1)}`;
         } else {
           like_statement = k + not + ` LIKE ${v}%`;
         }
-      } else if (side === 'both') {
-        if (typeof v === 'string') {
+      } else if (side === "both") {
+        if (typeof v === "string") {
           like_statement =
             k +
             not +
@@ -763,7 +761,7 @@ export abstract class GenericQueryBuilder {
           like_statement = k + not + ` LIKE %${v}%`;
         }
       } else {
-        throw new Error('like(): Invalid direction provided!');
+        throw new Error("like(): Invalid direction provided!");
       }
 
       this._where(like_statement, null, type, false);
@@ -772,80 +770,72 @@ export abstract class GenericQueryBuilder {
     return this;
   }
 
-  from(from_param) {
+  from(from_param: string | string[]) {
     if (!Array.isArray(from_param)) {
       from_param = [from_param];
     }
-    for (let i in from_param) {
-      let val = from_param[i];
-
-      if (typeof val !== 'string' || val.trim() === '') continue;
-
-      if (val.indexOf(',') !== -1) {
-        const objects = val.split(',');
-        for (let j in objects) {
-          const v = objects[j].trim();
-
+    from_param.forEach((val) => {
+      if (typeof val !== "string" || val.trim() === "") return;
+      if (val.indexOf(",") !== -1) {
+        const objects = val.split(",");
+        objects.forEach((v) => {
+          v = v.trim();
           this._track_aliases(v);
-
           this.from_array.push(this._protect_identifiers(v, false, true));
-        }
+        });
       } else {
         val = val.trim();
-
         // Extract any aliases that might exist.  We use this information
         // in the protect_identifiers function to know whether to add a table prefix
         this._track_aliases(val);
-
         this.from_array.push(this._protect_identifiers(val, false, true));
       }
-    }
-
+    });
     return this;
   }
 
-  select(select, escape = true) {
+  select(select: string | string[], escape = true) {
     // First param must be a non-empty string or array
-    if (typeof select === 'string') {
+    if (typeof select === "string") {
       select = select.trim();
       if (select.length == 0) {
-        throw new Error('Your select string is empty!');
+        throw new Error("Your select string is empty!");
       }
     } else if (Array.isArray(select)) {
       if (select.length == 0) {
-        throw new Error('Your select array is empty!');
+        throw new Error("Your select array is empty!");
       }
     } else {
       throw new Error(
-        'Select method requires a string or array to be passed in the first parameter!'
+        "Select method requires a string or array to be passed in the first parameter!"
       );
     }
 
     // Split statements out into individual ones by comma (unless there is a function or subquery with commas in it)
-    if (typeof select === 'string') {
-      if (select.indexOf(')') === -1) {
-        select = select.split(',');
+    if (typeof select === "string") {
+      if (select.indexOf(")") === -1) {
+        select = select.split(",");
       } else {
         if (escape === true) {
           // Prevent it from trying to parse select statements with functions and if statements
           if (/\w\s?\(/.test(select))
             throw new Error(
-              'Select statements with subqueries or functions cannot be escaped! Please escape manually and pass FALSE as the second paramter to the select method.'
+              "Select statements with subqueries or functions cannot be escaped! Please escape manually and pass FALSE as the second paramter to the select method."
             );
 
           // Identify individual statements within select string
           let m, open_paren_index, inner_parenthesis;
           const reg = /\)/g;
           while ((m = reg.exec(select) !== null)) {
-            open_paren_index = m.input.substring(0, m.index).lastIndexOf('(');
+            open_paren_index = m.input.substring(0, m.index).lastIndexOf("(");
             if (open_paren_index !== -1) {
               inner_parenthesis = m.input.substring(
                 open_paren_index + 1,
                 m.index
               );
-              if (inner_parenthesis.indexOf(',') !== -1) {
+              if (inner_parenthesis.indexOf(",") !== -1) {
                 throw new Error(
-                  'Select statements with subqueries or functions cannot be escaped! Please escape manually and pass FALSE as the second paramter to the select method.'
+                  "Select statements with subqueries or functions cannot be escaped! Please escape manually and pass FALSE as the second paramter to the select method."
                 );
                 break;
               }
@@ -856,47 +846,46 @@ export abstract class GenericQueryBuilder {
         }
       }
     }
-
-    for (let i in select) {
-      const val = select[i].trim();
-
-      if (val !== '') {
+    (select as string[]).forEach((val) => {
+      val = val.trim();
+      if (val !== "") {
         this.select_array.push(this._protect_identifiers(val, false, escape));
       }
-    }
+    });
+
     return this;
   }
 
   select_min(select, alias) {
-    return this._min_max_avg_sum(select, alias, 'MIN');
+    return this._min_max_avg_sum(select, alias, "MIN");
   }
 
   select_max(select, alias) {
-    return this._min_max_avg_sum(select, alias, 'MAX');
+    return this._min_max_avg_sum(select, alias, "MAX");
   }
 
   select_avg(select, alias) {
-    return this._min_max_avg_sum(select, alias, 'AVG');
+    return this._min_max_avg_sum(select, alias, "AVG");
   }
 
   select_sum(select, alias) {
-    return this._min_max_avg_sum(select, alias, 'SUM');
+    return this._min_max_avg_sum(select, alias, "SUM");
   }
 
-  private _min_max_avg_sum(select = '', alias = '', type = 'MAX') {
-    if (typeof select !== 'string' || select === '') {
-      throw Error('Invalid query!');
+  private _min_max_avg_sum(select = "", alias = "", type = "MAX") {
+    if (typeof select !== "string" || select === "") {
+      throw Error("Invalid query!");
       return this;
     }
 
     type = type.toUpperCase();
 
-    if (['MAX', 'MIN', 'AVG', 'SUM'].indexOf(type) === -1) {
-      throw Error('Invalid function type!');
+    if (["MAX", "MIN", "AVG", "SUM"].indexOf(type) === -1) {
+      throw Error("Invalid function type!");
       return this;
     }
 
-    if (alias == '') {
+    if (alias == "") {
       alias = this._create_aliases_from_table(select.trim());
     }
 
@@ -910,63 +899,61 @@ export abstract class GenericQueryBuilder {
   }
 
   distinct(do_distinct) {
-    do_distinct = typeof do_distinct !== 'boolean' ? true : do_distinct;
+    do_distinct = typeof do_distinct !== "boolean" ? true : do_distinct;
 
     if (do_distinct) {
       this._clear_array(this.distinct_clause);
-      this.distinct_clause.push('DISTINCT ');
+      this.distinct_clause.push("DISTINCT ");
     } else {
       this._clear_array(this.distinct_clause);
     }
     return this;
   }
 
-  group_by(by) {
-    if (typeof by === 'string') {
+  group_by(by: string | string[]) {
+    if (typeof by === "string") {
       by = by.trim();
       if (by.length <= 0) {
         throw new Error("You haven't provided any fields to group by!");
       }
-      by = by.split(',');
+      by = by.split(",");
     }
 
     if (!Array.isArray(by)) {
       throw new Error(
-        'You have provided an invalid value to the group_by() method. Only strings and arrays of strings are allowed.'
+        "You have provided an invalid value to the group_by() method. Only strings and arrays of strings are allowed."
       );
     }
 
     if (by.length <= 0) {
       throw new Error("You haven't provided any fields to group by!");
     }
-
-    for (let key in by) {
-      if (typeof by[key] !== 'string') {
+    by.forEach((val) => {
+      if (typeof val !== "string") {
         throw new Error(
-          'You have provided an invalid value to the group_by() method. Only strings and arrays of strings are allowed!'
+          "You have provided an invalid value to the group_by() method. Only strings and arrays of strings are allowed!"
         );
       }
-
-      const val = by[key].trim();
-
-      if (val !== '') {
+      val = val.trim();
+      if (val !== "") {
         this.group_by_array.push(this._protect_identifiers(val));
       }
-    }
+    });
+
     return this;
   }
 
   having(key, value, escape = true) {
-    escape = typeof escape !== 'boolean' ? true : escape;
-    return this._having(key, value, 'AND ', escape);
+    escape = typeof escape !== "boolean" ? true : escape;
+    return this._having(key, value, "AND ", escape);
   }
 
   or_having(key, value, escape = true) {
-    escape = typeof escape !== 'boolean' ? true : escape;
-    return this._having(key, value, 'OR ', escape);
+    escape = typeof escape !== "boolean" ? true : escape;
+    return this._having(key, value, "OR ", escape);
   }
 
-  private _having(key, value, type = 'AND ', escape = true) {
+  private _having(key, value, type = "AND ", escape = true) {
     let m;
     let key_array = {};
     const key_is_object =
@@ -976,17 +963,17 @@ export abstract class GenericQueryBuilder {
 
     if (/^(string|number|boolean)$/.test(typeof value)) {
       // if the value is a string, number, or boolean...
-      if (typeof key !== 'string' || /^\W+$/i.test(key)) {
+      if (typeof key !== "string" || /^\W+$/i.test(key)) {
         // if the key is not a string...
         throw new Error(
-          'having(): The value you provided when calling having() will be ignored since the first parameter is not a single field provided in string form.'
+          "having(): The value you provided when calling having() will be ignored since the first parameter is not a single field provided in string form."
         );
       }
       key_array[key] = value;
       key = key_array;
-    } else if (typeof value === 'undefined' || value === null) {
+    } else if (typeof value === "undefined" || value === null) {
       if (key_is_object === false) {
-        if (typeof key === 'string') {
+        if (typeof key === "string") {
           if (value === null) {
             key_array[key] = null;
             key = key_array;
@@ -996,7 +983,7 @@ export abstract class GenericQueryBuilder {
         } else if (key_is_array === true) {
           //console.log("Key is NOT a string");
           for (let i in key) {
-            if (typeof key[i] !== 'string') {
+            if (typeof key[i] !== "string") {
               throw new Error(
                 "having(): You've provided an unparseable format to the having() method.."
               );
@@ -1015,20 +1002,20 @@ export abstract class GenericQueryBuilder {
 
     for (let k in key) {
       let v = key[k];
-      const prefix = this.having_array.length == 0 ? '' : type;
+      const prefix = this.having_array.length == 0 ? "" : type;
 
       if (escape === true) {
         k = this._protect_identifiers(k);
       }
 
       if (v === null) {
-        k += ' IS';
+        k += " IS";
       } else if (!this._has_operator(k)) {
-        k += ' =';
+        k += " =";
       }
 
-      if (v != '') {
-        v = ' ' + this._qb_escape(v);
+      if (v != "") {
+        v = " " + this._qb_escape(v);
       }
 
       this.having_array.push(prefix + k + v);
@@ -1037,43 +1024,43 @@ export abstract class GenericQueryBuilder {
     return this;
   }
 
-  join(table = '', relation = '', direction = '', escape = true) {
+  join(table = "", relation = "", direction = "", escape = true) {
     if (
-      typeof table !== 'string' ||
-      (typeof table === 'string' && table.trim().length === 0)
+      typeof table !== "string" ||
+      (typeof table === "string" && table.trim().length === 0)
     ) {
       throw new Error(
-        'You must provide a table, view, or stored procedure to join to!'
+        "You must provide a table, view, or stored procedure to join to!"
       );
     }
 
     relation =
-      typeof relation === 'string' && relation.trim().length !== 0
+      typeof relation === "string" && relation.trim().length !== 0
         ? relation.trim()
-        : '';
+        : "";
     direction =
-      typeof direction === 'string' && direction.trim().length !== 0
+      typeof direction === "string" && direction.trim().length !== 0
         ? direction.trim()
-        : '';
-    escape = typeof escape === 'boolean' ? escape : true;
+        : "";
+    escape = typeof escape === "boolean" ? escape : true;
 
     const valid_directions = [
-      'LEFT',
-      'RIGHT',
-      'OUTER',
-      'INNER',
-      'LEFT OUTER',
-      'RIGHT OUTER',
+      "LEFT",
+      "RIGHT",
+      "OUTER",
+      "INNER",
+      "LEFT OUTER",
+      "RIGHT OUTER",
     ];
 
     if (direction) {
       direction = direction.toUpperCase().trim();
       if (!valid_directions.includes(direction)) {
-        throw new Error('Invalid join direction provided as third parameter.');
+        throw new Error("Invalid join direction provided as third parameter.");
       }
       if (!relation) {
         throw new Error(
-          'You must provide a valid condition to join on when providing a join direction.'
+          "You must provide a valid condition to join on when providing a join direction."
         );
       }
     }
@@ -1101,7 +1088,7 @@ export abstract class GenericQueryBuilder {
             escape
           )}`;
         })
-        .join(' ');
+        .join(" ");
 
       relation = `ON ${new_relation}`;
     }
@@ -1129,7 +1116,7 @@ export abstract class GenericQueryBuilder {
     } else if (relation && escape === false) {
       relation = `ON ${relation}`;
     } else {
-      relation = '';
+      relation = "";
     }
 
     // Do we want to escape the table name?
@@ -1144,13 +1131,13 @@ export abstract class GenericQueryBuilder {
   order_by(orderby, direction?) {
     let m;
     direction =
-      typeof direction === 'string' ? direction.toLowerCase().trim() : '';
+      typeof direction === "string" ? direction.toLowerCase().trim() : "";
 
     // Don't need to do anything below if the direction provided is random
     if (
-      direction === 'random' ||
-      direction === 'rand' ||
-      direction === 'rand()'
+      direction === "random" ||
+      direction === "rand" ||
+      direction === "rand()"
     ) {
       this.order_by_array.push(this.rand_word);
       return this;
@@ -1158,17 +1145,17 @@ export abstract class GenericQueryBuilder {
 
     // Normalize orderby to be an array of items
     if (!Array.isArray(orderby)) {
-      if (typeof orderby === 'string') {
+      if (typeof orderby === "string") {
         orderby = orderby.trim();
         if (orderby.length == 0) {
           throw new Error("You haven't provided any fields to order by!!");
         }
-        orderby = orderby.split(',');
+        orderby = orderby.split(",");
       } else if (!orderby && /(newid|random|RAND|RAND\(\))/i.test(direction)) {
         this.order_by_array.push(this.rand_word);
         return this;
       } else {
-        throw new Error('No field provided to order by!');
+        throw new Error("No field provided to order by!");
       }
     }
 
@@ -1177,7 +1164,7 @@ export abstract class GenericQueryBuilder {
     }
 
     for (let i in orderby) {
-      orderby[i] = orderby[i].replace(/\s+/g, ' ');
+      orderby[i] = orderby[i].replace(/\s+/g, " ");
 
       if ((m = orderby[i].match(/([^\s]+)\s+(ASC|DESC|RAND\(\)|NEWID\(\))/i))) {
         if (m[2].trim() === this.rand_word) {
@@ -1189,10 +1176,10 @@ export abstract class GenericQueryBuilder {
           direction: m[2].trim().toUpperCase(),
         };
       } else {
-        if (/^(ASC|DESC)$/i.test(direction) || direction === '') {
+        if (/^(ASC|DESC)$/i.test(direction) || direction === "") {
           orderby[i] = {
             field: this._protect_identifiers(orderby[i].trim()),
-            direction: direction !== '' ? direction.toUpperCase() : 'ASC',
+            direction: direction !== "" ? direction.toUpperCase() : "ASC",
           };
         } else {
           throw new Error(
@@ -1201,7 +1188,7 @@ export abstract class GenericQueryBuilder {
         }
       }
 
-      this.order_by_array.push(orderby[i].field + ' ' + orderby[i].direction);
+      this.order_by_array.push(orderby[i].field + " " + orderby[i].direction);
     }
 
     return this;
@@ -1209,7 +1196,7 @@ export abstract class GenericQueryBuilder {
 
   limit(limit, offset) {
     this._clear_array(this.limit_to);
-    this.limit_to.push(this._prepare_for_limit_and_offset(limit, 'limit'));
+    this.limit_to.push(this._prepare_for_limit_and_offset(limit, "limit"));
 
     if (offset !== undefined) {
       return this.offset(offset);
@@ -1220,7 +1207,7 @@ export abstract class GenericQueryBuilder {
 
   offset(offset) {
     this._clear_array(this.offset_val);
-    this.offset_val.push(this._prepare_for_limit_and_offset(offset, 'offset'));
+    this.offset_val.push(this._prepare_for_limit_and_offset(offset, "offset"));
     return this;
   }
 
@@ -1230,17 +1217,17 @@ export abstract class GenericQueryBuilder {
   }
 
   private set(key, value?, escape = true) {
-    escape = typeof escape === 'boolean' ? escape : true;
+    escape = typeof escape === "boolean" ? escape : true;
 
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       // Convert key and value params to {key: value}
       key = key.trim();
       if (key.length == 0)
-        throw new Error('set(): Invalid field name provided!');
+        throw new Error("set(): Invalid field name provided!");
 
-      if (typeof value === 'undefined')
+      if (typeof value === "undefined")
         throw new Error(
-          'set(): First param was string but no value (second param) provided to set!'
+          "set(): First param was string but no value (second param) provided to set!"
         );
 
       const key_array = {};
@@ -1250,26 +1237,26 @@ export abstract class GenericQueryBuilder {
       Object.prototype.toString.call(key) === Object.prototype.toString.call({})
     ) {
       if (Object.keys(key).length === 0) {
-        throw new Error('set(): The object you provided is empty.');
+        throw new Error("set(): The object you provided is empty.");
       }
 
-      if (typeof value !== 'undefined' && value !== null) {
+      if (typeof value !== "undefined" && value !== null) {
         throw new Error(
-          'set(): The value you provided in the second parameter will be ignored since you passed an object as the first parameter.'
+          "set(): The value you provided in the second parameter will be ignored since you passed an object as the first parameter."
         );
       }
     } else {
       throw new Error(
-        'set(): First parameter must be a non-empty string or non-empty object! ' +
+        "set(): First parameter must be a non-empty string or non-empty object! " +
           typeof key +
-          ' provided.'
+          " provided."
       );
     }
 
     // Add each key:value pair to the set_array
     for (let i in key) {
       let v = key[i];
-      if (typeof v === 'undefined') continue;
+      if (typeof v === "undefined") continue;
 
       if (v instanceof Date) v = v.toString();
 
@@ -1279,15 +1266,15 @@ export abstract class GenericQueryBuilder {
         escape === false
       ) {
         throw new Error(
-          'set(): Invalid value provided! (provided: ' +
+          "set(): Invalid value provided! (provided: " +
             v +
-            ' (type: ' +
+            " (type: " +
             typeof v +
-            ')'
+            ")"
         );
-      } else if (typeof v === 'number' && (v === Infinity || v !== +v)) {
+      } else if (typeof v === "number" && (v === Infinity || v !== +v)) {
         throw new Error(
-          'set(): Infinity and NaN are not valid values in MySQL!'
+          "set(): Infinity and NaN are not valid values in MySQL!"
         );
       }
 
@@ -1325,23 +1312,23 @@ export abstract class GenericQueryBuilder {
   }
 
   // ---------------------------- SQL EXEC TOOLS ----------------------------//
-  insert(table = '', set: any = '', ignore = false, suffix = '') {
+  insert(table = "", set: any = "", ignore = false, suffix = "") {
     return this._insert(table, set, ignore, suffix);
   }
 
-  _insert(table = '', set: any = '', ignore = false, suffix = '') {
-    table = table || ''; // force falsy values to be an empty string
-    ignore = typeof ignore !== 'boolean' ? false : ignore;
-    suffix = typeof suffix !== 'string' ? '' : suffix;
+  _insert(table = "", set: any = "", ignore = false, suffix = "") {
+    table = table || ""; // force falsy values to be an empty string
+    ignore = typeof ignore !== "boolean" ? false : ignore;
+    suffix = typeof suffix !== "string" ? "" : suffix;
 
     if (
       /^(number|boolean)$/.test(typeof set) ||
-      (typeof set == 'string' && set !== '') ||
+      (typeof set == "string" && set !== "") ||
       Object.prototype.toString.call(set) ===
         Object.prototype.toString.call(/test/)
     ) {
       throw new Error(
-        'insert(): Invalid data provided to insert into database!'
+        "insert(): Invalid data provided to insert into database!"
       );
     }
     if (Array.isArray(set)) {
@@ -1358,21 +1345,21 @@ export abstract class GenericQueryBuilder {
       }
     }
 
-    if (typeof table !== 'string') {
-      throw new Error('insert(): Table parameter must be a string!');
+    if (typeof table !== "string") {
+      throw new Error("insert(): Table parameter must be a string!");
     }
 
     table = table.trim();
 
-    if (table !== '' && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
+    if (table !== "" && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
       throw new Error(
         "insert(): Invalid table name ('" + table + "') provided!"
       );
     }
 
-    if (table === '') {
+    if (table === "") {
       if (this.from_array.length == 0)
-        throw new Error('insert(): No tables set to insert into!');
+        throw new Error("insert(): No tables set to insert into!");
       table = this.from_array[0];
     } else {
       this._clear_array(this.from_array);
@@ -1398,11 +1385,11 @@ export abstract class GenericQueryBuilder {
   }
 
   _get(table) {
-    if (typeof table === 'string' || Array.isArray(table)) {
+    if (typeof table === "string" || Array.isArray(table)) {
       this.from(table);
     } else {
       if (this.from_array.length === 0) {
-        throw new Error('You have not specified any tables to select from!');
+        throw new Error("You have not specified any tables to select from!");
       }
     }
     return this._compile_select();
@@ -1414,23 +1401,23 @@ export abstract class GenericQueryBuilder {
 
   _get_where(table = null, where = null) {
     // Check if table is either a string or array
-    if (typeof table !== 'string' && !Array.isArray(table))
+    if (typeof table !== "string" && !Array.isArray(table))
       throw new Error(
-        'You must specify a table or array of tables in the first parameter of get_where()'
+        "You must specify a table or array of tables in the first parameter of get_where()"
       );
 
     // If table is a string, make sure it's not empty
-    if (typeof table === 'string' && table.trim().length <= 0)
-      throw new Error('Invalid table string specified!');
+    if (typeof table === "string" && table.trim().length <= 0)
+      throw new Error("Invalid table string specified!");
 
     // If table is array, make sure there are only strings in there and that they are non-empty strings
     if (Array.isArray(table)) {
       for (let v in table) {
         if (
-          typeof v !== 'string' ||
-          (typeof v === 'string' && v.trim().length <= 0)
+          typeof v !== "string" ||
+          (typeof v === "string" && v.trim().length <= 0)
         ) {
-          throw new Error('Invalid table string specified in array of tables!');
+          throw new Error("Invalid table string specified in array of tables!");
           break;
         }
       }
@@ -1440,11 +1427,11 @@ export abstract class GenericQueryBuilder {
 
     if (
       where === null ||
-      typeof where !== 'object' ||
+      typeof where !== "object" ||
       Object.keys(where).length === 0
     )
       throw new Error(
-        'You must supply an object of field:value pairs in the second parameter of get_where()'
+        "You must supply an object of field:value pairs in the second parameter of get_where()"
       );
 
     this.where(where);
@@ -1460,8 +1447,8 @@ export abstract class GenericQueryBuilder {
     return this._update(table, set, where);
   }
 
-  _update(table = '', set = null, where = null) {
-    table = table || '';
+  _update(table = "", set = null, where = null) {
+    table = table || "";
     set = set || null;
 
     // Send to batch_update if the data param is an array
@@ -1479,7 +1466,7 @@ export abstract class GenericQueryBuilder {
         return this.update_batch(table, set, index, where);
       } else {
         throw new Error(
-          'update(): update_batch attempted but could not ascertain a valid index to use from the dataset provided.'
+          "update(): update_batch attempted but could not ascertain a valid index to use from the dataset provided."
         );
       }
     }
@@ -1487,11 +1474,11 @@ export abstract class GenericQueryBuilder {
     // If set is a number, boolean, a non-empty string, or regex, fail
     if (
       /^(number|boolean)$/.test(typeof set) ||
-      (typeof set == 'string' && set !== '') ||
+      (typeof set == "string" && set !== "") ||
       Object.prototype.toString.call(set) ===
         Object.prototype.toString.call(/test/)
     ) {
-      throw new Error('update(): Invalid data provided to update database!');
+      throw new Error("update(): Invalid data provided to update database!");
     }
 
     // If data object was provided, set it
@@ -1504,7 +1491,7 @@ export abstract class GenericQueryBuilder {
         this.set(set);
       } else {
         throw new Error(
-          'update(): Empty data object provided. This is not allowed.'
+          "update(): Empty data object provided. This is not allowed."
         );
       }
     }
@@ -1512,26 +1499,26 @@ export abstract class GenericQueryBuilder {
     // Fail if, at this point, nothing has been set
     if (this.set_array.length == 0) {
       throw new Error(
-        'update(): You must set some field value pairs to update using the set method or via an object passed to the second parameter of the update method!'
+        "update(): You must set some field value pairs to update using the set method or via an object passed to the second parameter of the update method!"
       );
     }
 
     // NOTE: If falsy table provided, table will have been converted to an empty string...
-    if (typeof table !== 'string') {
-      throw new Error('update(): Table parameter must be a string!');
+    if (typeof table !== "string") {
+      throw new Error("update(): Table parameter must be a string!");
     }
 
     table = table.trim();
 
     // Table name must be in a legitimate format
-    if (table !== '' && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
-      throw new Error('update(): You have not set any tables to update!');
+    if (table !== "" && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
+      throw new Error("update(): You have not set any tables to update!");
     }
 
     // If table not supplied, it must have been supplied already
-    if (table == '') {
+    if (table == "") {
       if (this.from_array.length == 0) {
-        throw new Error('update(): No tables set to update!');
+        throw new Error("update(): No tables set to update!");
       }
       table = this.from_array[0];
     } else {
@@ -1547,7 +1534,7 @@ export abstract class GenericQueryBuilder {
     return this._compile_update();
   }
 
-  update_batch(table = '', set = null, index = null, where = null) {
+  update_batch(table = "", set = null, index = null, where = null) {
     return this._update_batch(table, set, index, where);
   }
 
@@ -1556,7 +1543,7 @@ export abstract class GenericQueryBuilder {
   }
 
   _delete(table, where) {
-    if (typeof table == 'string' && table.trim().length > 0) {
+    if (typeof table == "string" && table.trim().length > 0) {
       this._clear_array(this.from_array);
       this.from(table);
     }
@@ -1568,7 +1555,7 @@ export abstract class GenericQueryBuilder {
     ) {
       if (Object.keys(where).length === 0) {
         throw new Error(
-          'where(): The object you provided to limit the deletion of rows is empty. Provide NULL if you need to an empty value.'
+          "where(): The object you provided to limit the deletion of rows is empty. Provide NULL if you need to an empty value."
         );
       } else {
         this.where(where);
@@ -1579,13 +1566,13 @@ export abstract class GenericQueryBuilder {
   }
 
   get_compiled_select(table) {
-    if (typeof table !== 'undefined') {
+    if (typeof table !== "undefined") {
       this._track_aliases(table);
       this.from(table);
     } else {
       if (this.from_array.length == 0) {
         throw new Error(
-          'You have not specified any tables to build a select statement with!'
+          "You have not specified any tables to build a select statement with!"
         );
         return this;
       }
@@ -1595,7 +1582,7 @@ export abstract class GenericQueryBuilder {
   }
 
   get_compiled_delete(table) {
-    if (typeof table !== 'function') {
+    if (typeof table !== "function") {
       this._track_aliases(table);
       this.from(table);
     }
@@ -1604,7 +1591,7 @@ export abstract class GenericQueryBuilder {
   }
 
   get_compiled_update(table) {
-    if (typeof table !== 'function') {
+    if (typeof table !== "function") {
       this._track_aliases(table);
       this.from(table);
     }
@@ -1612,7 +1599,7 @@ export abstract class GenericQueryBuilder {
   }
 
   get_compiled_insert(table) {
-    if (typeof table !== 'function') {
+    if (typeof table !== "function") {
       this._track_aliases(table);
       this.from(table);
     }
@@ -1636,7 +1623,7 @@ export abstract class GenericQueryBuilder {
   }
 
   private last_query() {
-    return this.last_query_string[0] || '';
+    return this.last_query_string[0] || "";
   }
 
   private escape(val) {
@@ -1648,59 +1635,59 @@ export abstract class GenericQueryBuilder {
   // }
 
   _empty_table(table) {
-    if (typeof table === 'string' && table.trim().length > 0) {
+    if (typeof table === "string" && table.trim().length > 0) {
       this._clear_array(this.from_array);
       this.from(table);
     }
 
     if (this.from_array.length === 0) {
       throw new Error(
-        'empty_table(): You have not specified a table to empty!'
+        "empty_table(): You have not specified a table to empty!"
       );
-      return '';
+      return "";
     }
 
-    return 'DELETE FROM ' + this.from_array[0];
+    return "DELETE FROM " + this.from_array[0];
   }
 
   _truncate(table) {
-    if (typeof table === 'string' && table.trim().length > 0) {
+    if (typeof table === "string" && table.trim().length > 0) {
       this._clear_array(this.from_array);
       this.from(table);
     }
 
     if (this.from_array.length === 0) {
       throw new Error(
-        'truncate(): You have not specified a table to truncate!'
+        "truncate(): You have not specified a table to truncate!"
       );
-      return '';
+      return "";
     }
 
-    return 'TRUNCATE ' + this.from_array[0];
+    return "TRUNCATE " + this.from_array[0];
   }
 
-  _update_batch(table = '', set = null, index = null, where = null) {
+  _update_batch(table = "", set = null, index = null, where = null) {
     // Make sure an index has been provided!
     if (
-      typeof index !== 'string' ||
-      (typeof index === 'string' && index.length === 0)
+      typeof index !== "string" ||
+      (typeof index === "string" && index.length === 0)
     ) {
       throw new Error(
-        'update_batch(): Invalid index provided to generate batch update query!'
+        "update_batch(): Invalid index provided to generate batch update query!"
       );
     }
 
     // Check to make sure we have a dataset
     if (!Array.isArray(set)) {
       throw new Error(
-        'update_batch(): Array of object expected and non-array received.'
+        "update_batch(): Array of object expected and non-array received."
       );
     }
 
     // Make sure our dataset isn't emtpy
     if (set.length === 0) {
       throw new Error(
-        'update_batch(): You must supply some data to batch update the table with.'
+        "update_batch(): You must supply some data to batch update the table with."
       );
     }
 
@@ -1723,7 +1710,7 @@ export abstract class GenericQueryBuilder {
         }
       } else {
         throw new Error(
-          'update_batch(): You have supplied an invalid object to batch update!'
+          "update_batch(): You have supplied an invalid object to batch update!"
         );
       }
     }
@@ -1731,26 +1718,26 @@ export abstract class GenericQueryBuilder {
     // Fail if, at this point, nothing has been set
     if (this.set_array.length == 0) {
       throw new Error(
-        'update_batch(): You must provide some data to batch update!'
+        "update_batch(): You must provide some data to batch update!"
       );
     }
 
     // NOTE: If falsy table provided, table will have been converted to an empty string...
-    if (typeof table !== 'string') {
-      throw new Error('update(): Table parameter must be a string!');
+    if (typeof table !== "string") {
+      throw new Error("update(): Table parameter must be a string!");
     }
 
     table = table.trim();
 
     // Table name must be in a legitimate format
-    if (table !== '' && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
-      throw new Error('update(): You have not set any tables to update!');
+    if (table !== "" && !/^[a-zA-Z0-9\$_]+(\.[a-zA-Z0-9\$_]+)?$/.test(table)) {
+      throw new Error("update(): You have not set any tables to update!");
     }
 
     // If table not supplied, it must have been supplied already
-    if (table == '') {
+    if (table == "") {
       if (this.from_array.length == 0) {
-        throw new Error('No tables set to insert into!');
+        throw new Error("No tables set to insert into!");
       }
       table = this.from_array[0];
     } else {
@@ -1771,7 +1758,7 @@ export abstract class GenericQueryBuilder {
         );
       }
       throw new Error(
-        'You have provided too many tables to build batch UPDATE query with!'
+        "You have provided too many tables to build batch UPDATE query with!"
       );
     }
 
@@ -1783,7 +1770,7 @@ export abstract class GenericQueryBuilder {
       const when_then = {};
       const ids = [];
       const where =
-        this.where_array.length > 0 ? this._build_where_clause() + ' AND ' : '';
+        this.where_array.length > 0 ? this._build_where_clause() + " AND " : "";
       const chunk = this.set_array.slice(i, 100);
 
       // Escape the index
@@ -1807,10 +1794,10 @@ export abstract class GenericQueryBuilder {
 
       // Build the actual SQL statement
       let sql = `UPDATE (${table}) SET `;
-      let cases = '';
+      let cases = "";
 
       for (let l in when_then) {
-        cases += l + ' = CASE ';
+        cases += l + " = CASE ";
 
         for (let m in when_then[l]) {
           cases += when_then[l][m];
@@ -1826,10 +1813,10 @@ export abstract class GenericQueryBuilder {
       if (where) {
         sql += ` ${where}`;
       } else {
-        sql += ' WHERE ';
+        sql += " WHERE ";
       }
 
-      sql += `${index} IN (${ids.join(',')})`;
+      sql += `${index} IN (${ids.join(",")})`;
 
       // Add query to batch
       batches.push(sql);
@@ -1842,9 +1829,9 @@ export abstract class GenericQueryBuilder {
     table: string,
     set: [] | string | any,
     ignore: boolean,
-    suffix: string | ''
+    suffix: string | ""
   );
-  abstract _compile_insert(ignore?: boolean, suffix?: string | '');
+  abstract _compile_insert(ignore?: boolean, suffix?: string | "");
   abstract _compile_select();
   abstract _count(table: string);
   abstract _compile_update();
