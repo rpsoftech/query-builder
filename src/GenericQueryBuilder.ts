@@ -4,7 +4,7 @@ export abstract class GenericQueryBuilder {
   private where_in_array = [];
   from_array = [];
   join_array = [];
-  abstract escape_char: [];
+  abstract escape_char: string;
   abstract multi_condition_rgx: RegExp;
   abstract condition_rgx: RegExp;
   abstract rand_word: string;
