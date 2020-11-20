@@ -1,6 +1,6 @@
 import { QueryBuilder } from './query_builder';
 import { ERROR } from '../QueryExecError';
-import { PoolConnection } from 'mariadb';
+import { PoolConnection, QueryOptions } from 'mariadb';
 // ****************************************************************************
 // QueryBuilder "Query Execution" methods.
 // ****************************************************************************
@@ -13,7 +13,7 @@ export class QueryExec extends QueryBuilder {
     this._connection = db;
   }
 
-  _exec(sql, data?) {
+  _exec(sql, data?:QueryOptions) {
     if (typeof this._connection === 'object') {
       return this._connection.query(
         {
@@ -38,8 +38,8 @@ export class QueryExec extends QueryBuilder {
   commitTransaction() {
     this._connection.commit();
   }
-  query(sql, data?) {
-    this._exec(sql, data);
+  query(sql:string, data?:QueryOptions) {
+    return this._exec(sql, data);
   }
   insert_update(table: string, insertset: {}, updateset: {}) {
     this.reset_query('');
