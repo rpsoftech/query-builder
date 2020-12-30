@@ -1,9 +1,9 @@
-import * as maria from 'mariadb';
+import { Pool as marpool, PoolConfig, createPool } from 'mariadb';
 import { QueryExec } from './query_exec';
 export class Pool {
-  _pool: maria.Pool;
-  constructor(settings: maria.PoolConfig) {
-    this._pool = maria.createPool(settings);
+  _pool: marpool;
+  constructor(settings: PoolConfig) {
+    this._pool = createPool(settings);
   }
 
   pool() {
