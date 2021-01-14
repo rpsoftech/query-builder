@@ -4,10 +4,10 @@ require('@zeit/ncc')(__dirname + '/src/index.ts', {
   // provide a custom cache path or disable caching
   cache: false,
   // externals to leave as requires of the build
-  // externals: ["mariadb"],
+  externals: ["mariadb"],
   // directory outside of which never to emit assets
   filterAssetBase: process.cwd(), // default
-  minify: true, // default
+  minify: false, // default
   sourceMap: false, // default
   sourceMapBasePrefix: '../', // default treats sources as output-relative
   // when outputting a sourcemap, automatically include

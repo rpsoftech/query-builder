@@ -1,21 +1,21 @@
 {
   "name": "query-builder-mysql",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "dist/index.js",
   "homepage": "https://github.com/rpsoftech/query-builder.git",
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "pack": "node pack",
-    "prepare":"run-s build pack"
+    "prepare": "node pack"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mariadb": "^2.5.2"
+  },
   "devDependencies": {
     "@types/node": "^14.0.5",
     "@zeit/ncc": "^0.22.3",
-    "mariadb": "git+https://github.com/rpsoftech/mariadb-connector-nodejs.git",
     "nodemon": "^2.0.4",
-    "npm-run-all": "^4.1.5",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
   },
