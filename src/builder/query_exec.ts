@@ -8,12 +8,21 @@ export class QueryExec extends QueryBuilder {
   _connection: PoolConnection;
   resolve: Function;
   reject: Function;
+  private execute_que = true;
   constructor(db: PoolConnection) {
     super(db);
     this._connection = db;
   }
-
-  _exec(sql, data?:QueryOptions) {
+  AutoExeQueryStatus(status: boolean) {
+    this.execute_que = status;
+  }
+  _exec(sql: string, data?: QueryOptions, exec?: boolean) {
+    if (
+      this.execute_que === false &&
+      (typeof exec === 'undefined' || exec === false)
+    ) {
+      return sql;
+    }
     if (typeof this._connection === 'object') {
       return this._connection.query(
         {
@@ -38,8 +47,8 @@ export class QueryExec extends QueryBuilder {
   commitTransaction() {
     this._connection.commit();
   }
-  query(sql:string, data?:QueryOptions) {
-    return this._exec(sql, data);
+  query(sql: string, data?: QueryOptions) {
+    return this._exec(sql, data, true);
   }
   insert_update(table: string, insertset: {}, updateset: {}) {
     this.reset_query('');
