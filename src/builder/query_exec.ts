@@ -16,7 +16,7 @@ export class QueryExec extends QueryBuilder {
   AutoExeQueryStatus(status: boolean) {
     this.execute_que = status;
   }
-  _exec(sql: string, data?: QueryOptions, exec?: boolean) {
+  async _exec(sql: string, data?: QueryOptions, exec?: boolean) {
     if (
       this.execute_que === false &&
       (typeof exec === 'undefined' || exec === false)
