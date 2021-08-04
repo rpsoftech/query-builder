@@ -8,10 +8,17 @@ export class QueryExec extends QueryBuilder {
   _connection: PoolConnection;
   resolve: Function;
   reject: Function;
-  private execute_que = true;
+  private _execute_que = true;
   constructor(db: PoolConnection) {
     super(db);
     this._connection = db;
+  }
+
+  public get execute_que() {
+    return this._execute_que;
+  }
+  public set execute_que(value: boolean) {
+    this._execute_que = value;
   }
   AutoExeQueryStatus(status: boolean) {
     this.execute_que = status;
