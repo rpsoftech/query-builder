@@ -62,7 +62,9 @@ export class QueryExec extends QueryBuilder {
     let sql1 = this._insert(table, insertset);
     sql1 += ' ON DUPLICATE KEY UPDATE ';
     this.reset_query(sql1);
-    sql1 += this._update(table, updateset).split('SET')[1];
+    const updateArray:string[] = this._update(table, updateset).split('SET');
+    updateArray.shift();
+    sql1 += updateArray.join('SET');
     this.reset_query(sql1);
 
     return this._exec(sql1);
