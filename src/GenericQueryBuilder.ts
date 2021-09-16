@@ -1445,7 +1445,7 @@ export abstract class GenericQueryBuilder {
     return this._count(table);
   }
 
-  update(table, set?, where = null) {
+  update(table, set?:any, where = null) {
     return this._update(table, set, where);
   }
 
