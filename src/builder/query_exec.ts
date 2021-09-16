@@ -115,7 +115,7 @@ export class QueryExec extends QueryBuilder {
     return this._exec(sql);
   }
 
-  update(table: string, set: any, where: any = null) {
+  update(table: string, set?: any, where: any = null) {
     // The where parameter is optional, it could be the cb...
     if (
       typeof where === 'undefined' ||
