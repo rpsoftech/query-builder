@@ -1215,7 +1215,9 @@ export abstract class GenericQueryBuilder {
     // By default, this will do nothing. Specific drivers will override as needed.
     return this;
   }
-
+  set_for_update(key,value,escape = true){
+    this.set(key,value,escape);
+  }
   private set(key, value?, escape = true) {
     escape = typeof escape === "boolean" ? escape : true;
 
