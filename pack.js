@@ -1,6 +1,6 @@
 // console.log();
 const fs = require('fs');
-require('@zeit/ncc')(__dirname + '/src/index.ts', {
+require('@vercel/ncc')(__dirname + '/src/index.ts', {
   // provide a custom cache path or disable caching
   cache: false,
   // externals to leave as requires of the build
