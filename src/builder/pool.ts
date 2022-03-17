@@ -2,8 +2,10 @@ import { Pool as marpool, PoolConfig, createPool } from 'mariadb';
 import { QueryExec } from './query_exec';
 export class Pool {
   _pool: marpool;
+  databasestring: string;
   constructor(settings: PoolConfig) {
     this._pool = createPool(settings);
+    this.databasestring = settings.database;
   }
 
   pool() {
