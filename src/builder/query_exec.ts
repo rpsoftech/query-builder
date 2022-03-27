@@ -9,7 +9,7 @@ export class QueryExec extends QueryBuilder {
   resolve: Function;
   reject: Function;
   private _execute_que = true;
-  constructor(db: PoolConnection) {
+  constructor(db: PoolConnection, private queryOptions?: QueryOptions) {
     super(db);
     this._connection = db;
   }
@@ -17,26 +17,23 @@ export class QueryExec extends QueryBuilder {
   public get execute_que() {
     return this._execute_que;
   }
-  public set execute_que(value: boolean) {
-    this._execute_que = value;
-  }
   AutoExeQueryStatus(status: boolean) {
-    this.execute_que = status;
+    this._execute_que = status;
   }
   async _exec(sql: string, data?: QueryOptions, exec?: boolean) {
     if (
-      this.execute_que === false &&
+      this._execute_que === false &&
       (typeof exec === 'undefined' || exec === false)
     ) {
       return sql;
     }
     if (typeof this._connection === 'object') {
       return this._connection.query(
-        {
-          sql: sql,
-          // rowsAsArray:true
-        },
-        data
+        data || this.queryOptions
+          ? Object.assign(data || this.queryOptions, {
+              sql,
+            })
+          : sql
       );
     } else {
       throw ERROR.NO_CONN_OBJ_ERR;
@@ -62,7 +59,7 @@ export class QueryExec extends QueryBuilder {
     let sql1 = this._insert(table, insertset);
     sql1 += ' ON DUPLICATE KEY UPDATE ';
     this.reset_query(sql1);
-    const updateArray:string[] = this._update(table, updateset).split('SET');
+    const updateArray: string[] = this._update(table, updateset).split('SET');
     updateArray.shift();
     sql1 += updateArray.join('SET');
     this.reset_query(sql1);

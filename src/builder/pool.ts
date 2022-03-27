@@ -1,9 +1,9 @@
-import { Pool as marpool, PoolConfig, createPool } from 'mariadb';
+import { Pool as marpool, PoolConfig, createPool, QueryOptions } from 'mariadb';
 import { QueryExec } from './query_exec';
 export class Pool {
   _pool: marpool;
   databasestring: string;
-  constructor(settings: PoolConfig) {
+  constructor(settings: PoolConfig,private queryOptions?:QueryOptions) {
     this._pool = createPool(settings);
     this.databasestring = settings.database;
   }
@@ -18,7 +18,7 @@ export class Pool {
       if (console && console.hasOwnProperty('error')) console.error(error_msg);
       throw new Error(error_msg);
     }
-    return this._pool.getConnection().then((db) => new QueryExec(db));
+    return this._pool.getConnection().then((db) => new QueryExec(db,this.queryOptions));
   }
 
   disconnect() {
