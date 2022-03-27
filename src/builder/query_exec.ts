@@ -5,11 +5,17 @@ import { PoolConnection, QueryOptions } from 'mariadb';
 // QueryBuilder "Query Execution" methods.
 // ****************************************************************************
 export class QueryExec extends QueryBuilder {
+  public get queryOptions(): QueryOptions {
+    return this._queryOptions;
+  }
+  public set queryOptions(value: QueryOptions) {
+    this._queryOptions = value;
+  }
   _connection: PoolConnection;
   resolve: Function;
   reject: Function;
   private _execute_que = true;
-  constructor(db: PoolConnection, private queryOptions?: QueryOptions) {
+  constructor(db: PoolConnection, private _queryOptions?: QueryOptions) {
     super(db);
     this._connection = db;
   }
