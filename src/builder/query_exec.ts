@@ -16,9 +16,14 @@ export class QueryExec extends QueryBuilder {
   reject: Function;
   private PostDataProcessor: ((data: any) => any)[] = [];
   private _execute_que = true;
-  constructor(db: PoolConnection, private _queryOptions?: QueryOptions) {
+  constructor(
+    db: PoolConnection,
+    PostDataProcessor: any,
+    private _queryOptions?: QueryOptions,
+  ) {
     super(db);
     this._connection = db;
+    this.PostDataProcessor = PostDataProcessor;
   }
 
   public get execute_que() {
@@ -27,12 +32,7 @@ export class QueryExec extends QueryBuilder {
   AutoExeQueryStatus(status: boolean) {
     this._execute_que = status;
   }
-  ClearAll() {
-    this.PostDataProcessor = [];
-  }
-  AddDataProcessorPostExecution(processor: (d: any) => any) {
-    this.PostDataProcessor.push(processor);
-  }
+
   async _exec(sql: string, data?: QueryOptions, exec?: boolean) {
     if (
       this._execute_que === false &&
