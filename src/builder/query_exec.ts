@@ -14,6 +14,7 @@ export class QueryExec extends QueryBuilder {
   _connection: PoolConnection;
   resolve: Function;
   reject: Function;
+  private PostDataProcessor: ((data: any) => any)[] = [];
   private _execute_que = true;
   constructor(db: PoolConnection, private _queryOptions?: QueryOptions) {
     super(db);
@@ -26,6 +27,12 @@ export class QueryExec extends QueryBuilder {
   AutoExeQueryStatus(status: boolean) {
     this._execute_que = status;
   }
+  ClearAll() {
+    this.PostDataProcessor = [];
+  }
+  AddDataProcessorPostExecution(processor: (d: any) => any) {
+    this.PostDataProcessor.push(processor);
+  }
   async _exec(sql: string, data?: QueryOptions, exec?: boolean) {
     if (
       this._execute_que === false &&
@@ -34,13 +41,22 @@ export class QueryExec extends QueryBuilder {
       return sql;
     }
     if (typeof this._connection === 'object') {
-      return this._connection.query(
-        data || this.queryOptions
-          ? Object.assign(data || this.queryOptions, {
-              sql,
-            })
-          : sql
-      );
+      return this._connection
+        .query(
+          data || this.queryOptions
+            ? Object.assign(data || this.queryOptions, {
+                sql,
+              })
+            : sql
+        )
+        .then((a) => {
+          if (this.PostDataProcessor.length > 0) {
+            return this.PostDataProcessor.reduce((d, f) => {
+              return f(d);
+            }, a);
+          }
+          return a;
+        });
     } else {
       throw ERROR.NO_CONN_OBJ_ERR;
     }
