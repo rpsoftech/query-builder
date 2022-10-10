@@ -768,7 +768,7 @@ export abstract class GenericQueryBuilder {
             not +
             ` LIKE ${v.substring(0, 1)}${
               side === 'both' || side === 'before' || side === 'left' ? '%' : ''
-            }${v.substring(1, v.length - 2)}${
+            }${v.substring(1, v.length - 1)}${
               side === 'both' || side === 'after' || side === 'right' ? '%' : ''
             }${v.slice(-1)}`;
         } else {
