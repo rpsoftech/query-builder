@@ -1,6 +1,6 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.1.63",
+  "version": "3.1.64",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
   "main": "dist/index.js",
   "homepage": "https://github.com/rpsoftech/query-builder.git",
