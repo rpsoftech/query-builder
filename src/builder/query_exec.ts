@@ -88,7 +88,8 @@ export class QueryExec extends QueryBuilder {
 
     return this._exec(sql1);
   }
-  count(table?) {
+
+  count(table?:string) {
     const sql = this._count(table);
     this.reset_query(sql);
 

@@ -1,14 +1,24 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ES6",
+    "module": "CommonJS",
     "rootDir": "src",
     "outDir": "dist",
     "moduleResolution": "Node",
     "removeComments": true,
     "declarationMap": false,
-    "declaration": true,
-    "sourceMap": false
+    "declaration": false,
+    "sourceMap": false,
+    "incremental": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "useUnknownInCatchVariables": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true
   },
   "include": ["./src/*.ts"],
   "exclude": ["node_modules", ".vscode"]
