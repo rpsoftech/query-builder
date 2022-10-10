@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "ES6",
     "rootDir": "src",
     "outDir": "dist",
+    "moduleResolution": "Node",
     "removeComments": true,
     "declarationMap": false,
     "declaration": true,

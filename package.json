@@ -1,25 +1,29 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
   "main": "dist/index.js",
   "homepage": "https://github.com/rpsoftech/query-builder.git",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "start": "node -r ts-node/register ./test.ts",
+    "prepublish": "npm run build",
     "start:watch": "nodemon",
     "build": "tsc --project tsconfig.build.json",
-    "pack": "node pack",
-    "prepare": "node pack"
+    "pack": "node pack"
   },
   "peerDependencies": {
     "mariadb": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.23",
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.3",
-    "@vercel/ncc": "^0.33.3"
+    "mariadb": "^3.0.0",
+    "@types/node": "^18.8.3",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "@vercel/ncc": "^0.34.0"
   },
   "author": "rpsoftechindia@gmail.com",
   "license": "ISC"
