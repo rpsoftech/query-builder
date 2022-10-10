@@ -1,6 +1,6 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.1.62",
+  "version": "3.1.63",
   "type": "module",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
   "main": "dist/index.js",
