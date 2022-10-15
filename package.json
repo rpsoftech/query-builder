@@ -1,18 +1,24 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.1.68",
+  "version": "3.1.7",
   "author": "rpsoftechindia@gmail.com",
   "license": "ISC",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "/dist/index.d.ts",
   "homepage": "https://github.com/rpsoftech/query-builder.git",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "exports": {
-    "default": "./dist/index.js",
-    "import": "./dist/esm/index.js",
-    "require": "./dist/index.js"
+    ".":{
+      "types":"./dist/index.d.ts",
+      "node":{
+        "import": "./dist/esm/index.js",
+        "require": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
+    }
   },
   "scripts": {
     "start": "node -r ts-node/register ./test.ts",
