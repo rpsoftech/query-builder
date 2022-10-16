@@ -1,6 +1,6 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.1.82",
+  "version": "3.1.85",
   "author": "rpsoftechindia@gmail.com",
   "license": "ISC",
   "description": "Typescript Based Mysql And Mariadb Query Builder",

@@ -1,0 +1,12 @@
+{
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.yarn": true,
+      "**/.git": true,
+      "**/.idea": true,
+      "**/.vscode": true,
+      "**/dist": true
+    },
+    "eslint.validate": ["json"]
+  }
+  

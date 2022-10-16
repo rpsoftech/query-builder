@@ -290,7 +290,7 @@ export abstract class GenericQueryBuilder {
     if (/\sAS\s/gi.test(item)) {
       const offset = item.indexOf(item.match(/\sAS\s/gi)[0]);
       alias = protect_identifiers
-        ? item.substring(offset, 4) +
+        ? item.substring(offset,offset+4) +
           this._escape_identifiers(item.slice(offset + 4), false)
         : item.substring(offset);
       item = item.substring(0, offset);
