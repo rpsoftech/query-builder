@@ -5,7 +5,7 @@
   "license": "ISC",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
   "main": "./dist/index.js",
-  "types": "/dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "homepage": "https://github.com/rpsoftech/query-builder.git",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
