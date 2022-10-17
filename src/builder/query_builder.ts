@@ -70,9 +70,16 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
     for (let i in this.set_array) {
       const key = Object.keys(this.set_array[i])[0];
       const val = this.set_array[i][key];
-
       keys.push(key);
-      values.push(val);
+      if (
+        typeof val === 'string' &&
+        val.trim() === '' &&
+        this._queryOptions.allowBlankStringInput
+      ) {
+        values.push("''");
+      } else {
+        values.push(val);
+      }
     }
 
     const verb = ('INSERT ' + (ignore === true ? 'IGNORE ' : '')).trim();
