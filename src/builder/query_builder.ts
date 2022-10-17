@@ -1,19 +1,26 @@
 import { GenericQueryBuilder } from '../GenericQueryBuilder';
 import { Connection } from 'mariadb';
+import { QueryOptions } from '../QueryExecError';
 export abstract class QueryBuilder extends GenericQueryBuilder {
   escape_char = '`';
   multi_condition_rgx = /\s(OR|AND)\s/i;
   condition_rgx = /([\[\]\w\."\s-]+)(\s*[^\"\[`'\w-]+\s*)(.+)/i;
   rand_word = 'RAND()';
   dbInstance: Connection;
-  constructor(db: Connection) {
+  constructor(db: Connection, protected _queryOptions?: QueryOptions) {
     super();
     this.dbInstance = db;
   }
 
   // ---------------------------------------- SQL ESCAPE FUNCTIONS ------------------------ //
   _qb_escape(str: any) {
-    if (typeof str === 'boolean') {
+    if (
+      typeof str === 'string' &&
+      str.trim() === '' &&
+      this._queryOptions?.allowBlankStringInput
+    ) {
+      return str;
+    } else if (typeof str === 'boolean') {
       str = str === false ? 0 : 1;
     } else if (
       typeof str === 'number' ||
@@ -132,7 +139,6 @@ export abstract class QueryBuilder extends GenericQueryBuilder {
         throw new Error(
           "You haven't provided any tables to build UPDATE query with!"
         );
-
       }
       throw new Error(
         'You have provided too many tables to build UPDATE query with!'

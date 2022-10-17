@@ -19,9 +19,9 @@ export class QueryExec extends QueryBuilder {
   constructor(
     db: PoolConnection,
     PostDataProcessor: any,
-    private _queryOptions?: QueryOptions,
+    _queryOptions?: QueryOptions
   ) {
-    super(db);
+    super(db, _queryOptions);
     this._connection = db;
     this.PostDataProcessor = PostDataProcessor;
   }
@@ -89,7 +89,7 @@ export class QueryExec extends QueryBuilder {
     return this._exec(sql1);
   }
 
-  count(table?:string) {
+  count(table?: string) {
     const sql = this._count(table);
     this.reset_query(sql);
 

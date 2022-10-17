@@ -1,4 +1,5 @@
-import { Pool as marpool, PoolConfig, createPool, QueryOptions } from 'mariadb';
+import { Pool as marpool, PoolConfig, createPool } from 'mariadb';
+import { QueryOptions } from '../QueryExecError';
 import { QueryExec } from './query_exec';
 export class Pool {
   _pool: marpool;
