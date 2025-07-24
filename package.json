@@ -1,6 +1,6 @@
 {
   "name": "query-builder-mysql",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": "rpsoftechindia@gmail.com",
   "license": "ISC",
   "description": "Typescript Based Mysql And Mariadb Query Builder",
@@ -32,11 +32,12 @@
     "mariadb": "^3.1.1"
   },
   "devDependencies": {
-    "@types/node": "^18.16.0",
-    "@vercel/ncc": "^0.36.1",
-    "mariadb": "^3.1.1",
-    "nodemon": "^2.0.22",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
-  }
+    "@types/node": "^24.1.0",
+    "@vercel/ncc": "^0.38.3",
+    "mariadb": "^3.4.5",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "yarn@4.9.2"
 }
